@@ -1,0 +1,73 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**asset**" {
+  + ""id"": //bigint [PK]//
+  --
+  ""created"": //timestamp without time zone //
+  ""filename"": //character varying(255) //
+  ""filesize"": //bigint //
+  ""hash"": //character varying(255) //
+  ""mimetype"": //character varying(255) //
+  ""ocrcontent"": //text //
+  ""document_id"": //bigint [FK]//
+}
+
+entity "**document**" {
+  + ""id"": //bigint [PK]//
+  --
+  ""created"": //timestamp without time zone //
+  ""description"": //character varying(255) //
+  ""lastupdated"": //timestamp without time zone //
+  ""title"": //character varying(255) //
+  ""epic_id"": //bigint [FK]//
+}
+
+entity "**document_label**" {
+  --
+  *""document_id"": //bigint [FK]//
+  *""label_id"": //bigint [FK]//
+}
+
+entity "**documentreference**" {
+  + ""source_id"": //bigint [PK][FK]//
+  + ""target_id"": //bigint [PK][FK]//
+  --
+  ""referencetype"": //character varying(255) //
+}
+
+entity "**epic**" {
+  + ""id"": //bigint [PK]//
+  --
+  ""name"": //character varying(255) //
+}
+
+entity "**epic_document**" {
+  --
+  *""epic_id"": //bigint [FK]//
+  *""associateddocuments_id"": //bigint [FK]//
+}
+
+entity "**label**" {
+  + ""id"": //bigint [PK]//
+  --
+  ""name"": //character varying(255) //
+}
+
+"**asset**"   }--  "**document**"
+
+"**document**" "n"   }-- "1" "**epic**"
+
+"**document_label**"   }--  "**document**"
+
+"**document_label**"   }--  "**label**"
+
+"**documentreference**"   }--  "**document**"
+
+"**documentreference**"   }--  "**document**"
+
+"**epic_document**"   }--  "**epic**"
+
+"**epic_document**"   }--  "**document**"
+@enduml

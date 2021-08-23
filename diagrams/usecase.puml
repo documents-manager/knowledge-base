@@ -1,0 +1,56 @@
+@startuml usecase
+left to right direction
+actor User as u
+
+package Documentmanager {
+    (Search\nDocument) as searchDoc
+    (Edit\nDocument) as editDoc
+    (Add\nDocument) as addDoc
+    (Add\nAsset) as addAss
+    (Delete\nAsset) as delAss
+    (Assign\nEpic) as assignEp
+    (Add\nEpic) as addEp
+    (Delete\nEpic) as delEp
+    (Add\nLabel) as addLa
+    (Delete\nLabel) as delLa
+    (Assign\nLabel) as assignLa
+    (Upload\nFile) as upFi
+    (Index\nAsset) as inAss
+    (OCR\nAsset) as ocrAss
+
+    rectangle Search as s {
+        (List by\nEpic) as liEp
+        (List by\nLabel) as liLa
+        (Free Text\nsearch) as frSearch
+        (Sort by\ncreation date) as soCreationDate
+        (Sort by\nupdated date) as soUpdateDate
+    }
+}
+
+u --> searchDoc
+u --> addDoc
+u --> addLa
+u --> addEp
+u --> delLa
+u --> delEp
+u --> editDoc
+
+editDoc ..> assignEp: extends
+editDoc ..> assignLa: extends
+editDoc ..> addAss: extends
+editDoc ..> delAss: extends
+addDoc .|> editDoc
+
+addAss ..> upFi: includes
+addAss ..> ocrAss: includes
+inAss .> ocrAss: includes
+ocrAss .> upFi: includes
+searchDoc .> inAss: includes
+
+searchDoc ..> liEp: extends
+searchDoc ..> liLa: extends
+searchDoc ..> frSearch: extends
+searchDoc ..> soCreationDate: extends
+searchDoc ..> soUpdateDate: extends
+
+@enduml
