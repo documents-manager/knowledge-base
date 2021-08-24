@@ -1,0 +1,15 @@
+@startuml archtecture
+package Frontend {
+    component [Angular] as fe
+}
+package Backend {
+    database ElasticSearch as es
+    component [Quarkus] as be
+    database PostgreSQl as db
+}
+
+fe <--> be: REST-API
+be --> es: Searches
+be --> db: Manages entities
+db .> es: Gets synced
+@enduml
