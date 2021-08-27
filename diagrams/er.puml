@@ -24,12 +24,6 @@ entity "**document**" {
   ""epic_id"": //bigint [FK]//
 }
 
-entity "**document_label**" {
-  --
-  *""document_id"": //bigint [FK]//
-  *""label_id"": //bigint [FK]//
-}
-
 entity "**documentreference**" {
   + ""source_id"": //bigint [PK][FK]//
   + ""target_id"": //bigint [PK][FK]//
@@ -43,11 +37,6 @@ entity "**epic**" {
   ""name"": //character varying(255) //
 }
 
-entity "**epic_document**" {
-  --
-  *""epic_id"": //bigint [FK]//
-  *""associateddocuments_id"": //bigint [FK]//
-}
 
 entity "**label**" {
   + ""id"": //bigint [PK]//
@@ -55,19 +44,13 @@ entity "**label**" {
   ""name"": //character varying(255) //
 }
 
-"**asset**"   }--  "**document**"
+"**asset**"   "n"   }-- "1"  "**document**": contain
 
-"**document**" "n"   }-- "1" "**epic**"
+"**document**" "n"   }-- "1" "**epic**": belong to
 
-"**document_label**"   }--  "**document**"
+"**document**"  "n"   }--{ "n"  "**label**": reference
 
-"**document_label**"   }--  "**label**"
+"**documentreference**"   "n"   }-- "1"  "**document**": reference
 
-"**documentreference**"   }--  "**document**"
-
-"**documentreference**"   }--  "**document**"
-
-"**epic_document**"   }--  "**epic**"
-
-"**epic_document**"   }--  "**document**"
+"**documentreference**"  "n"   }-- "1"  "**document**": is referenced by
 @enduml
