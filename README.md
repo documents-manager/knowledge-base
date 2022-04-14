@@ -6,7 +6,7 @@ Die Projektdokumentation befindet sich im [Wiki](https://github.com/documents-ma
 
 Software Voraussetzungen:
 
-- [docker]((https://docs.docker.com/get-docker/)
+- [docker](https://docs.docker.com/get-docker/)
 - [docker-compose](https://docs.docker.com/compose/install/)
 
 ```bash
