@@ -1,0 +1,128 @@
+version: '3.5'
+
+services:
+  documentor:
+    container_name: documentor
+    image: ghcr.io/documents-manager/documentor:1.0.1
+    environment:
+      - QUARKUS_HTTP_CORS=true
+      - QUARKUS_DATASOURCE_DB_KIND=postgresql
+      - QUARKUS_DATASOURCE_USERNAME=${POSTGRES_USER:-postgres}
+      - QUARKUS_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - QUARKUS_DATASOURCE_JDBC_URL=jdbc:postgresql://postgres:5432/document-manager
+      - QUARKUS_S3_ENDPOINT_OVERRIDE=http://minio:9000
+      - QUARKUS_S3_AWS_CREDENTIALS_STATIC_PROVIDER_ACCESS_KEY_ID=minio
+      - QUARKUS_S3_AWS_CREDENTIALS_STATIC_PROVIDER_SECRET_ACCESS_KEY=miniominio
+      - QUARKUS_HIBERNATE_SEARCH_ORM_ELASTICSEARCH_HOSTS=elasticsearch:9200
+      - QUARKUS_HIBERNATE_SEARCH_ORM_SCHEMA_MANAGEMENT_STRATEGY=create-or-update
+      - QUARKUS_HIBERNATE_SEARCH_ORM_AUTOMATIC_INDEXING_SYNCHRONIZATION_STRATEGY=sync
+    ports:
+      - "8081:8080"
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    links: 
+        - elasticsearch
+        - minio
+        - postgres
+    networks:
+      - document-manager
+      - default
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://documentor:8080/q/health/live" ]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  documentdoor:
+    container_name: documentdoor
+    image: ghcr.io/documents-manager/documentdoor:1.0.1
+    ports:
+      - "8080:8080"
+    depends_on:
+      documentor:
+        condition: service_healthy
+    links:
+      - documentor
+    networks:
+      - document-manager
+      - default
+
+  postgres:
+    container_name: postgres
+    image: postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: document-manager
+      PGDATA: /data/postgres
+    volumes:
+      - ./data/postgres:/data/postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - document-manager
+      - default
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  minio:
+    container_name: minio
+    image: minio/minio:RELEASE.2021-04-22T15-44-28Z
+    hostname: minio1
+    volumes:
+      - ./data/minio:/export
+    ports:
+      - "9000:9000"
+    networks:
+      - document-manager
+      - default
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: miniominio
+    command: server /export
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://minio:9000/minio/health/live" ]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  elasticsearch:
+    container_name: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.11.1
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - ./data/esdata:/usr/share/elasticsearch/data
+    networks:
+      - document-manager
+      - default
+    environment:
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    cap_add:
+      - IPC_LOCK
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://elasticsearch:9200"]
+        interval: 30s
+        timeout: 20s
+        retries: 3
+networks:
+  document-manager:
+    driver: bridge
