@@ -15,7 +15,9 @@ cd knowledge-base
 docker-compose up
 ```
 
-Die Weboberfläche ist unter [](http://localhost:8080) erreichbar.
+Die Weboberfläche ist unter [](http://localhost:8080) erreichbar. Wird das Backend nicht auf `localhost:8081` deployed, muss die entsprechende Domain in `config/prod.json` eingetragen werden und der `config` Ordner als Volumne in der `docker-compose.yml` unter `/usr/share/nginx/html/config` eingehangen werden.
+
+Siehe hierzu auch die `docker-compose.yml`.
 
 ## Limitationen
 

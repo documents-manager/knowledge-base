@@ -1,0 +1,4 @@
+{
+    "root": "http://localhost:8081",
+    "timeout": 3000
+}

@@ -3,7 +3,7 @@ version: '3.5'
 services:
   documentor:
     container_name: documentor
-    image: ghcr.io/documents-manager/documentor:1.0.1
+    image: ghcr.io/documents-manager/documentor:1.0.2
     environment:
       - QUARKUS_HTTP_CORS=true
       - QUARKUS_DATASOURCE_DB_KIND=postgresql
@@ -40,9 +40,11 @@ services:
 
   documentdoor:
     container_name: documentdoor
-    image: ghcr.io/documents-manager/documentdoor:1.0.1
+    image: ghcr.io/documents-manager/documentdoor:1.0.2
     ports:
       - "8080:8080"
+    volumes:
+      - ./config:/usr/share/nginx/html/assets/config
     depends_on:
       documentor:
         condition: service_healthy
@@ -109,6 +111,8 @@ services:
     environment:
       - xpack.security.enabled=false
       - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
+    mem_limit: 4g
     ulimits:
       memlock:
         soft: -1
