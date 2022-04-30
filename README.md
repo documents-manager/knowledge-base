@@ -15,7 +15,7 @@ cd knowledge-base
 docker-compose up
 ```
 
-Die Weboberfläche ist unter [](http://localhost:8080) erreichbar.
+Die Weboberfläche ist unter [http://localhost:8080](http://localhost:8080) erreichbar.
 
 ## Limitationen
 
