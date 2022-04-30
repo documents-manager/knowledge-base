@@ -44,7 +44,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ./config:/usr/share/nginx/html/assets/config
+      - documentdoor_config:/usr/share/nginx/html/assets/config
     depends_on:
       documentor:
         condition: service_healthy
@@ -63,14 +63,14 @@ services:
       POSTGRES_DB: document-manager
       PGDATA: /data/postgres
     volumes:
-      - ./data/postgres:/data/postgres
+      - postgres_data:/data/postgres
     ports:
       - "5432:5432"
     networks:
       - document-manager
       - default
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -81,7 +81,7 @@ services:
     image: minio/minio:RELEASE.2021-04-22T15-44-28Z
     hostname: minio1
     volumes:
-      - ./data/minio:/export
+      - minio_data:/export
     ports:
       - "9000:9000"
     networks:
@@ -104,7 +104,7 @@ services:
       - "9200:9200"
       - "9300:9300"
     volumes:
-      - ./data/esdata:/usr/share/elasticsearch/data
+      - elasticsearch_data:/usr/share/elasticsearch/data
     networks:
       - document-manager
       - default
@@ -130,3 +130,9 @@ services:
 networks:
   document-manager:
     driver: bridge
+
+volumes:
+  postgres_data:
+  minio_data:
+  elasticsearch_data:
+  documentdoor_config:
