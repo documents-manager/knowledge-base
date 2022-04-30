@@ -44,7 +44,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - documentdoor_config:/usr/share/nginx/html/assets/config
+      - ./config:/usr/share/nginx/html/assets/config
     depends_on:
       documentor:
         condition: service_healthy
