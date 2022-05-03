@@ -15,10 +15,6 @@ cd knowledge-base
 docker-compose up
 ```
 
-Die Weboberfläche ist unter [](http://localhost:8080) erreichbar. Wird das Backend nicht auf `localhost:8081` deployed, muss die entsprechende Domain in `config/prod.json` eingetragen werden und der `config` Ordner als Volumne in der `docker-compose.yml` unter `/usr/share/nginx/html/config` eingehangen werden.
-
-Siehe hierzu auch die `docker-compose.yml`.
-
-## Limitationen
-
-- Durch die Art und Weise wie Angular das Frontend baut, ist derzeit nur das Hosting unter `localhost` möglich. Dies soll in Zukunft konfigurierbar gestaltet werden.
+Die Weboberfläche ist unter [http://localhost:8080](http://localhost:8080) erreichbar.  
+Wird das Backend nicht auf `localhost:8081` deployed, muss die entsprechende Domain und der Port in `knowledge-base/config/prod.json` eingetragen werden.  
+Dafür ist der `config` Ordner als Volume des documentdoor services in der `docker-compose.yml` unter `/usr/share/nginx/html/config` eingehangen.
