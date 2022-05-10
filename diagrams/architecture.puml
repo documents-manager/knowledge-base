@@ -6,10 +6,12 @@ package Backend {
     database ElasticSearch as es
     component [Quarkus] as be
     database PostgreSQl as db
+    database Minio as minio
 }
 
 fe <--> be: REST-API
 be --> es: Searches
 be --> db: Manages entities
+be --> minio: Stores assets
 db .> es: Gets synced
 @enduml
